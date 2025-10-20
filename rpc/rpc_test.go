@@ -1,8 +1,9 @@
 package rpc_test
 
 import (
-	"lsp/rpc"
 	"testing"
+
+	"github.com/diofeher/lspexample/rpc"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -36,25 +37,31 @@ func TestEncodeMessage(t *testing.T) {
 
 func TestDecodeMessage(t *testing.T) {
 	tests := []struct {
-		Name     string
-		Msg      string
-		WantSize int
+		Name       string
+		Msg        string
+		WantSize   int
+		WantMethod string
 	}{
 		{
-			Name:     "test",
-			Msg:      "Content-Length: 8\r\n\r\n{\"ID\":1}",
-			WantSize: 8,
+			Name:       "test",
+			Msg:        "Content-Length: 17\r\n\r\n{\"Method\":\"test\"}",
+			WantSize:   17,
+			WantMethod: "test",
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.Name, func(t *testing.T) {
-			gotSize, err := rpc.DecodeMessage([]byte(test.Msg))
+			gotMethod, gotSize, err := rpc.DecodeMessage([]byte(test.Msg))
 			if err != nil {
-				t.Errorf("DecodeMessage() error: %v", err)
+				t.Fatalf("DecodeMessage() error: %d: %v", gotSize, err)
 			}
 
 			if diff := cmp.Diff(test.WantSize, gotSize); diff != "" {
+				t.Errorf("DecodeMessage() mismatch (-want +got):\n%s", diff)
+			}
+
+			if diff := cmp.Diff(test.WantMethod, gotMethod); diff != "" {
 				t.Errorf("DecodeMessage() mismatch (-want +got):\n%s", diff)
 			}
 		})

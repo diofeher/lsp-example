@@ -1,4 +1,4 @@
-module lsp
+module github.com/diofeher/lspexample
 
 go 1.25.0
 
