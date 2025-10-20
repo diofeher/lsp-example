@@ -82,7 +82,7 @@ func (s *State) CodeAction(id int, uri string) lsp.TextDocumentCodeActionRespons
 	actions := []lsp.CodeAction{}
 	for row, line := range strings.Split(text, "\n") {
 		idx := strings.Index(line, "VS Code")
-		if idx > 0 {
+		if idx > -1 {
 			replaceChange := map[string][]lsp.TextEdit{}
 			replaceChange[uri] = []lsp.TextEdit{
 				{
@@ -161,7 +161,6 @@ func getDiagnosticsForFile(logger *log.Logger, text string) []lsp.Diagnostic {
 	diagnostics := []lsp.Diagnostic{}
 
 	for row, line := range strings.Split(text, "\n") {
-		logger.Println(line)
 		idx := strings.Index(line, "VS Code")
 		if idx > -1 {
 			diagnostics = append(diagnostics, lsp.Diagnostic{
